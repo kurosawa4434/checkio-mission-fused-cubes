@@ -6,6 +6,21 @@ Each test is a dict with
     "answer" -- your right answer
     "explanation" -- not necessarily a key, it's used for an additional info in animation.
 """
+from random import randint
+from my_solution import fused_cubes
+
+
+def make_random_tests(num):
+    random_tests = []
+    for _ in range(num):
+        cubes = [(randint(-10, 10), randint(-10, 10), randint(-10, 10), randint(1, 5)) for _ in range(10)]
+        random_tests.append(
+            {
+                'input': cubes,
+                'answer': sorted(fused_cubes(cubes)),
+            }
+        )
+    return random_tests
 
 TESTS = {
     "Basics": [
@@ -198,4 +213,5 @@ TESTS = {
             "explanation": 'stone henge'
         },
     ],
+    'Randoms': make_random_tests(10)
 }
