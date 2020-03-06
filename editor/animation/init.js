@@ -7,9 +7,8 @@ requirejs(['ext_editor_io', 'jquery_190', 'raphael_210'],
                 return
             }
 
-            const input = data.in
+            let input = data.in
             const explanation = data.ext.explanation
-            const answer = data.ext.answer
 
             /*----------------------------------------------*
             *
@@ -68,13 +67,6 @@ requirejs(['ext_editor_io', 'jquery_190', 'raphael_210'],
 
             /*----------------------------------------------*
             *
-            * values
-            *
-            *----------------------------------------------*/
-            const EDGE = 13
-
-            /*----------------------------------------------*
-            *
             * make_cube (function)
             *
             *----------------------------------------------*/
@@ -82,17 +74,17 @@ requirejs(['ext_editor_io', 'jquery_190', 'raphael_210'],
                 let cubes = []
                 for (let dx = 0; dx < e; dx += 1) {
                     for (let dz = 0; dz < e; dz += 1) {
-                        cubes.push(['orange', x + dx, y + (e - 1), z + dz, 1])
+                        cubes.push(['orange', x + dx, y + (e - 1), z + dz, 1, 1, 1])
                     }
                 }
                 for (let dx = 0; dx < e; dx += 1) {
                     for (let dy = 0; dy < e - 1; dy += 1) {
-                        cubes.push(['orange', x + dx, y + dy, z, 1])
+                        cubes.push(['orange', x + dx, y + dy, z, 0, 1, 1])
                     }
                 }
                 for (let dz = 1; dz < e; dz += 1) {
                     for (let dy = 0; dy < e - 1; dy += 1) {
-                        cubes.push(['orange', x + (e - 1), y + dy, z + dz, 1])
+                        cubes.push(['orange', x + (e - 1), y + dy, z + dz, 0, 0, 1])
                     }
                 }
                 return cubes
@@ -106,8 +98,11 @@ requirejs(['ext_editor_io', 'jquery_190', 'raphael_210'],
             let max_px_size = 0
             let max_coord = 10
             let sizes = []
+
+            const EDGE = 13
             const height = EDGE / 2
             const base = (EDGE / 2) * Math.sqrt(3)
+
             input.forEach(([x, y, z, e]) => {
                 max_coord = Math.max(...[max_coord, x, x + e, y, y + e, z, z + e].map(c => Math.abs(c)))
                 const left = (x * base) + (z * base)
@@ -121,7 +116,6 @@ requirejs(['ext_editor_io', 'jquery_190', 'raphael_210'],
 
             const SCALE = EDGE * 12 / max_px_size
             const OFFSET = max_px_size * SCALE
-
             const paper_width = max_px_size * 2 * SCALE
             const paper_height = max_px_size * 2 * SCALE
 
@@ -132,15 +126,21 @@ requirejs(['ext_editor_io', 'jquery_190', 'raphael_210'],
             * draw process
             *
             *----------------------------------------------*/
-            const axis_units = [['origin', -1, -1, 0, 1]]
+            const axis_units = [['origin', -1, -1, 0]]
 
             for (let i = -(max_coord + 1); i <= max_coord; i += 1) {
-                axis_units.push(['x_axis', i, 0, 0, 1])
-                axis_units.push(['y_axis', 0, i, 0, 1])
-                axis_units.push(['z_axis', 0, 0, i, 1])
+                axis_units.push(['x_axis', i, 0, 0])
+                axis_units.push(['y_axis', 0, i, 0])
+                axis_units.push(['z_axis', 0, 0, i])
             }
 
-            const cubes = input.flatMap(a => make_cubes(...a))
+            let cubes = []
+            if (explanation[1]) {
+                cubes = explanation[1].map((c)=>['orange', ...c])
+            } else {
+                cubes = input.flatMap(a => make_cubes(...a))
+            }
+
             const all_cubes = [
                 ...axis_units,
                 ...cubes,
@@ -172,7 +172,7 @@ requirejs(['ext_editor_io', 'jquery_190', 'raphael_210'],
             * draw cube (and axis)
             *
             *----------------------------------------------*/
-            function draw_cube(color, cx, cy, cz, _) {
+            function draw_cube(color, cx, cy, cz, top, left, right) {
 
                 const edge = EDGE * SCALE
                 const height = edge / 2
@@ -209,22 +209,28 @@ requirejs(['ext_editor_io', 'jquery_190', 'raphael_210'],
                     // draw cube
 
                     // top
-                    paper.path(['M', x, y - edge,
-                        'l', base, -height,
-                        'l', base, height,
-                        'l', -base, height, 'z']).attr(attr.cube[color].mid)
+                    if (top) {
+                        paper.path(['M', x, y - edge,
+                            'l', base, -height,
+                            'l', base, height,
+                            'l', -base, height, 'z']).attr(attr.cube[color].mid)
+                    }
 
                     // left
-                    paper.path(['M', x, y,
-                        'v', -edge,
-                        'l', base, height,
-                        'v', edge, 'z']).attr(attr.cube[color].light)
+                    if (left) {
+                        paper.path(['M', x, y,
+                            'v', -edge,
+                            'l', base, height,
+                            'v', edge, 'z']).attr(attr.cube[color].light)
+                    }
 
                     // right
-                    paper.path(['M', x + base, y + height,
-                        'l', base, -height,
-                        'v', -edge,
-                        'l', -base, height, 'z']).attr(attr.cube[color].dark)
+                    if (right) {
+                        paper.path(['M', x + base, y + height,
+                            'l', base, -height,
+                            'v', -edge,
+                            'l', -base, height, 'z']).attr(attr.cube[color].dark)
+                    }
                 }
             }
         }

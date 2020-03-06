@@ -7,52 +7,65 @@ Each test is a dict with
     "explanation" -- not necessarily a key, it's used for an additional info in animation.
 """
 from random import randint
-from my_solution import fused_cubes
+from my_solution import fused_cubes, select_drawing_cubes
+from spheres import spheres
+
+
+def make_spheres_tests(radiuses):
+    answers = [56, 136, 304, 624, 1016, 1568, 2368, 3280, 4512, 5904, 7664, 9760, 12112]
+    return [{
+        'input': spheres[r],
+        'answer': [answers[r-3]],
+        'explanation': [f'spheres_test_{r}', select_drawing_cubes(spheres[r])],
+    } for r in radiuses]
 
 
 def make_random_tests(num):
     random_tests = []
-    for _ in range(num):
-        cubes = [(randint(-10, 10), randint(-10, 10), randint(-10, 10), randint(1, 5)) for _ in range(10)]
+    for n in range(num):
+        cubes = [(randint(-10, 10), randint(-10, 10),
+                  randint(-10, 10), randint(1, 7)) for _ in range(10)]
         random_tests.append(
             {
                 'input': cubes,
                 'answer': sorted(fused_cubes(cubes)),
+                'explanation': [f'random_test_{n}', select_drawing_cubes(cubes)],
             }
         )
     return random_tests
+
 
 TESTS = {
     "Basics": [
         {
             "input": [[0, 0, 0, 3], [1, 2, 2, 3]],
             "answer": [52],
-            "explanation": ''
+            "explanation": ['fused'],
         },
         {
             "input": [[0, 0, 0, 3], [1, 3, 2, 3]],
             "answer": [54],
-            "explanation": ''
+            "explanation": ['touch with faces'],
         },
         {
             "input": [[0, 0, 0, 3], [1, 3, 3, 3]],
             "answer": [27, 27],
-            "explanation": ''
+            "explanation": ['touch with edges'],
         },
         {
             "input": [[0, 0, 0, 3], [3, 3, 3, 3]],
             "answer": [27, 27],
-            "explanation": ''
+            "explanation": ['touch with vetices'],
         },
         {
             "input": [[0, 0, 0, 3], [3, 4, 3, 3]],
             "answer": [27, 27],
-            "explanation": ''
+            "explanation": ['separated'],
         },
         {
             "input": [[0, 0, 0, 3], [-2, -2, -2, 3]],
             "answer": [53],
-            "explanation": ''
+            "explanation": ['negative coordinate'],
         },
     ],
     "Extra": [
@@ -66,7 +79,7 @@ TESTS = {
                 [0, 0, -1, 1],
             ],
             "answer": [1, 1, 1, 1, 1, 1],
-            "explanation": 'cross'
+            "explanation": ['cross'],
         },
         {
             "input": [
@@ -76,8 +89,8 @@ TESTS = {
                 [-4, 2, 2, 2],
                 [-6, 0, 0, 2],
             ],
-            "answer": [8, 8, 8, 8 ,8],
-            "explanation": ''
+            "answer": [8, 8, 8, 8, 8],
+            "explanation": ['stair'],
         },
         {
             "input": [
@@ -108,37 +121,37 @@ TESTS = {
                 [2, 5, 0, 1],
             ],
             "answer": [25],
-            "explanation": 'torii'
+            "explanation": ['torii'],
         },
         {
             "input": [
-                    [-4, 0, -4, 2],
-                    [-2, 0, -4, 2],
-                    [0, 0, -4, 2],
-                    [2, 0, -4, 2],
-                    [2, 0, -2, 2],
-                    [2, 0, 0, 2],
-                    [2, 0, 2, 2],
-                    [-3, 2, -3, 2],
-                    [-1, 2, -3, 2],
-                    [1, 2, -3, 2],
-                    [1, 2, -1, 2],
-                    [1, 2, 1, 2],
-                    [-2, 4, -2, 2],
-                    [0, 4, -2, 2],
-                    [0, 4, 0, 2],
-                    [-1, 0, -5, 1],
-                    [0, 0, -5, 1],
-                    [-1, 1, -4, 2],
-                    [-1, 3, -3, 2],
-                    [4, 0, -1, 1],
-                    [4, 0, 0, 1],
-                    [2, 1, -1, 2],
-                    [1, 3, -1, 2],
-                    [-1, 6, -1, 2]
-                ],
+                [-4, 0, -4, 2],
+                [-2, 0, -4, 2],
+                [0, 0, -4, 2],
+                [2, 0, -4, 2],
+                [2, 0, -2, 2],
+                [2, 0, 0, 2],
+                [2, 0, 2, 2],
+                [-3, 2, -3, 2],
+                [-1, 2, -3, 2],
+                [1, 2, -3, 2],
+                [1, 2, -1, 2],
+                [1, 2, 1, 2],
+                [-2, 4, -2, 2],
+                [0, 4, -2, 2],
+                [0, 4, 0, 2],
+                [-1, 0, -5, 1],
+                [0, 0, -5, 1],
+                [-1, 1, -4, 2],
+                [-1, 3, -3, 2],
+                [4, 0, -1, 1],
+                [4, 0, 0, 1],
+                [2, 1, -1, 2],
+                [1, 3, -1, 2],
+                [-1, 6, -1, 2]
+            ],
             "answer": [140],
-            "explanation": 'maya'
+            "explanation": ['maya'],
         },
         {
             "input": [
@@ -183,7 +196,7 @@ TESTS = {
                 [-11, 0, 5, 1],
             ],
             "answer": [28, 89],
-            "explanation": 'sphinx'
+            "explanation": ['sphinx'],
         },
         {
             "input": [
@@ -210,8 +223,9 @@ TESTS = {
                 [3, 1, -1, 1],
             ],
             "answer": [2, 2, 8, 16, 103],
-            "explanation": 'stone henge'
+            "explanation": ['stone henge'],
         },
     ],
-    'Randoms': make_random_tests(10)
+    'Spheres': make_spheres_tests(range(3, 16, 3)),
+    'Randoms': make_random_tests(5)
 }
