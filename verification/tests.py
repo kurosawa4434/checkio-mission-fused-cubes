@@ -226,6 +226,6 @@ TESTS = {
             "explanation": ['stone henge'],
         },
     ],
-    'Spheres': make_spheres_tests(range(3, 16, 3)),
+    'Spheres': make_spheres_tests(range(3, 16, 1)),
     'Randoms': make_random_tests(5)
 }
