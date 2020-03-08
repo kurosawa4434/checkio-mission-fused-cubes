@@ -7,7 +7,7 @@ requirejs(['ext_editor_io', 'jquery_190', 'raphael_210'],
                 return
             }
 
-            let input = data.in
+            const input = data.in
             const explanation = data.ext.explanation
 
             /*----------------------------------------------*
@@ -67,31 +67,6 @@ requirejs(['ext_editor_io', 'jquery_190', 'raphael_210'],
 
             /*----------------------------------------------*
             *
-            * make_cube (function)
-            *
-            *----------------------------------------------*/
-            function make_cubes(x, y, z, e) {
-                let cubes = []
-                for (let dx = 0; dx < e; dx += 1) {
-                    for (let dz = 0; dz < e; dz += 1) {
-                        cubes.push(['orange', x + dx, y + (e - 1), z + dz, 1, 1, 1])
-                    }
-                }
-                for (let dx = 0; dx < e; dx += 1) {
-                    for (let dy = 0; dy < e - 1; dy += 1) {
-                        cubes.push(['orange', x + dx, y + dy, z, 0, 1, 1])
-                    }
-                }
-                for (let dz = 1; dz < e; dz += 1) {
-                    for (let dy = 0; dy < e - 1; dy += 1) {
-                        cubes.push(['orange', x + (e - 1), y + dy, z + dz, 0, 0, 1])
-                    }
-                }
-                return cubes
-            }
-
-            /*----------------------------------------------*
-            *
             * paper
             *
             *----------------------------------------------*/
@@ -134,12 +109,7 @@ requirejs(['ext_editor_io', 'jquery_190', 'raphael_210'],
                 axis_units.push(['z_axis', 0, 0, i])
             }
 
-            let cubes = []
-            if (explanation[1]) {
-                cubes = explanation[1].map((c)=>['orange', ...c])
-            } else {
-                cubes = input.flatMap(a => make_cubes(...a))
-            }
+            const cubes = explanation.map((c)=>['orange', ...c])
 
             const all_cubes = [
                 ...axis_units,
